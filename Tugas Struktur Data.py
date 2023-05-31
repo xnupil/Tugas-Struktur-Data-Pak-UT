@@ -1,19 +1,28 @@
 import numpy as np
 
-buah = ['Apel', 'Jeruk', 'Pisang', 'Kiwi', 'Mangga']
-kalori_buah = [91, 71, 103, 105, 96]
-harga_buah = [2360, 2120, 1890, 3870, 2870]
-stok_buah = [5, 10, 5, 10, 5]
+def knapsack01(prices, calories, stocks, budget):
+    n = len(prices)
+    dp = np.zeros((n + 1, budget + 1), dtype=int)
 
-uang_pak_blangkon = 25000
+    for i in range(1, n + 1):
+        for j in range(1, budget + 1):
+            if prices[i - 1] <= j:
+                maxCal = 0
+                for k in range(stocks[i - 1] + 1):
+                    if prices[i - 1] * k <= j:
+                        maxCal = max(maxCal, calories[i - 1] * k + dp[i - 1][j - prices[i - 1] * k])
+                dp[i][j] = maxCal
+            else:
+                dp[i][j] = dp[i - 1][j]
 
-jumlah_buah_dibeli = np.minimum(stok_buah, np.floor(uang_pak_blangkon / np.array(harga_buah)))
+    maxCal = dp[n][budget]
+    return maxCal
 
-total_kalori = np.sum(jumlah_buah_dibeli * np.array(kalori_buah))
+prices = [2360, 2120, 1890, 3770, 2870]
+calories = [91, 71, 105, 103, 96]
+stocks = [3, 3, 5, 10, 5]
+budget = 25000
 
-print(int(total_kalori))  
+maxCal = knapsack01(prices, calories, stocks, budget)
 
-print(jumlah_buah_dibeli)
-
-a = (5*2360)+(10*2120)+(5*1890)+(6*3870)+(5*2870)
-print(a)
+print("Kalori maksimal :", maxCal)
